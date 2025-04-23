@@ -10,6 +10,7 @@ import soundfile as sf
 from evaluate import load
 import json
 from datetime import datetime
+import click
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,6 +23,7 @@ if OPENAI_API_KEY is None:
     logger.error('Please provide an OPENAI_API_KEY in a .env file.')
 CLIENT = OpenAI(api_key = OPENAI_API_KEY)
 MODEL = 'whisper-1'
+COST_PER_MINUTE = 0.006
 
 
 def openai_transcribe(sample):
@@ -60,33 +62,40 @@ def main(args):
     outdir = os.path.dirname(args.outfile)
     os.makedirs(outdir, exist_ok=True)
     dataset = load_from_disk(args.indir)
-    dataset = dataset.shuffle(seed=1634).select(range(100)).map(openai_transcribe)
-    # Cache transcribed dataset for later, just in case
-    dataset.save_to_disk(f'{args.indir}_transcribed')
-    wer = load("wer")
-    results_dict['wer'] = wer.compute(predictions=dataset['transcription'], references=dataset['sentence'])
-    unique_locales = list(set(dataset['locale']))
-    cv_to_label = dict()
-    for lang in LANGUAGES:
-        cv = lang['common_voice_code']
-        if cv is not None:
-            label = lang['label']
-            if type(cv) is not list:
-                cv = [cv]
-            for cv_i in cv:
-                cv_to_label[cv_i] = label
-    for unique_locale in unique_locales:
-        language_label = cv_to_label[unique_locale]
-        filtered_dataset = dataset.filter(lambda sample: sample['locale'] == unique_locale)
-        locale_results_dict = {
-            'locale': unique_locale,
-            'n': filtered_dataset.num_rows,
-            'label': language_label,
-            'wer': wer.compute(predictions=filtered_dataset['transcription'], references=filtered_dataset['sentence'])
-        }
-        results_dict['locales'].append(locale_results_dict)
-    with open(args.outfile, 'w') as json_file:
-        json_file.write(json.dumps(results_dict, indent=2))
+    # Estimate cost
+    dataset = dataset.map(lambda sample: {'duration': sample['audio']['array'].shape[0] / sample['audio']['sampling_rate']})
+    total_minutes = sum(dataset['duration']) / 60
+    total_cost = total_minutes * COST_PER_MINUTE
+    if click.confirm(
+        f'Total audio length is {round(total_minutes)} and estimated total cost to transcribe with model {MODEL} is ${round(total_cost, 2)}. Do you want to continue?'
+    ):
+        dataset = dataset.map(openai_transcribe, remove_columns=["audio"])
+        # Cache transcribed dataset for later, just in case
+        dataset.save_to_disk(f'{args.indir}_transcribed')
+        wer = load("wer")
+        results_dict['wer'] = wer.compute(predictions=dataset['transcription'], references=dataset['sentence'])
+        unique_locales = list(set(dataset['locale']))
+        cv_to_label = dict()
+        for lang in LANGUAGES:
+            cv = lang['common_voice_code']
+            if cv is not None:
+                label = lang['label']
+                if type(cv) is not list:
+                    cv = [cv]
+                for cv_i in cv:
+                    cv_to_label[cv_i] = label
+        for unique_locale in unique_locales:
+            language_label = cv_to_label[unique_locale]
+            filtered_dataset = dataset.filter(lambda sample: sample['locale'] == unique_locale)
+            locale_results_dict = {
+                'locale': unique_locale,
+                'n': filtered_dataset.num_rows,
+                'label': language_label,
+                'wer': wer.compute(predictions=filtered_dataset['transcription'], references=filtered_dataset['sentence'])
+            }
+            results_dict['locales'].append(locale_results_dict)
+        with open(args.outfile, 'w') as json_file:
+            json_file.write(json.dumps(results_dict, indent=2))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
