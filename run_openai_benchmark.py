@@ -1,0 +1,96 @@
+import os
+import logging
+import argparse
+from dotenv import load_dotenv
+from datasets import load_from_disk
+from benchmark_dataset import LANGUAGES
+from openai import OpenAI, BadRequestError, OpenAIError
+from io import BytesIO
+import soundfile as sf
+from evaluate import load
+import json
+from datetime import datetime
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if OPENAI_API_KEY is None:
+    logger.error('Please provide an OPENAI_API_KEY in a .env file.')
+CLIENT = OpenAI(api_key = OPENAI_API_KEY)
+MODEL = 'whisper-1'
+
+
+def openai_transcribe(sample):
+    file_type='mp3'
+    audio_file = BytesIO()
+    audio_file.name = f'sample.{file_type}'
+    sf.write(audio_file, sample['audio']['array'], sample['audio']['sampling_rate'], format=file_type)
+    try:
+        transcription = CLIENT.audio.transcriptions.create(
+            model=MODEL,
+            file=audio_file,
+            language=sample['locale'][:2]
+        )
+    except BadRequestError: # Do not specify language when not officially supported
+        try:
+            transcription = CLIENT.audio.transcriptions.create(
+                model=MODEL,
+                file=audio_file
+            )
+        except OpenAIError:
+            transcription = ''
+    except OpenAIError:
+        transcription = ''
+    sample['transcription'] = transcription.text
+    return sample
+
+
+def main(args):
+    results_dict = {
+        'test_timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'input': args.indir,
+        'model': MODEL,
+        'wer': 0,
+        'locales': list()
+    }
+    outdir = os.path.dirname(args.outfile)
+    os.makedirs(outdir, exist_ok=True)
+    dataset = load_from_disk(args.indir)
+    dataset = dataset.map(openai_transcribe)
+    wer = load("wer")
+    results_dict['wer'] = wer.compute(predictions=dataset['transcription'], references=dataset['sentence'])
+    unique_locales = list(set(dataset['locale']))
+    cv_to_label = dict()
+    for lang in LANGUAGES:
+        cv = lang['common_voice_code']
+        if cv is not None:
+            label = lang['label']
+            if type(cv) is not list:
+                cv = [cv]
+            for cv_i in cv:
+                cv_to_label[cv_i] = label
+    for unique_locale in unique_locales:
+        language_label = cv_to_label[unique_locale]
+        filtered_dataset = dataset.filter(lambda sample: sample['locale'] == unique_locale)
+        locale_results_dict = {
+            'locale': unique_locale,
+            'n': filtered_dataset.num_rows,
+            'label': language_label,
+            'wer': wer.compute(predictions=filtered_dataset['transcription'], references=filtered_dataset['sentence'])
+        }
+        results_dict['locales'].append(locale_results_dict)
+    with open(args.outfile, 'w') as json_file:
+        json_file.write(json.dumps(results_dict, indent=2))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+                prog='OpenAI benchmarks',
+                description='Run benchmarks of OpenAI products with custom voice dataset')
+    parser.add_argument('-i', '--indir', default='./MD_voice_dataset')
+    parser.add_argument('-o', '--outfile', default=f'./results/openai_{MODEL}.json')
+    args = parser.parse_args()
+    main(args)

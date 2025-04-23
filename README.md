@@ -26,4 +26,5 @@ my_state_dataset = construct_dataset('MD', 10000)
 ## CLI use
 ```bash
 python benchmark_dataset.py MD # Save a Maryland dataset of >10,000 samples as ./MD_voice_dataset
+python run_openai_benchmark.py # Run a WER evaluation of ./MD_voice_dataset
 ```

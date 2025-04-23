@@ -17,7 +17,7 @@ SEED = 1634
 LANGUAGES = [
   {
     'acs_code': 'B16001_002E',
-    'label': 'Speak only English',
+    'label': 'English',
     'common_voice_code': 'en'
   },
   {
