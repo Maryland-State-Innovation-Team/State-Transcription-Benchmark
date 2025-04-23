@@ -1,0 +1,68 @@
+{
+  "test_timestamp": "2025-04-23 14:37:38",
+  "input": "./MD_voice_dataset",
+  "model": "whisper-1",
+  "wer": 0.1915137614678899,
+  "locales": [
+    {
+      "locale": "ur",
+      "n": 1,
+      "label": "Urdu",
+      "wer": 0.3333333333333333
+    },
+    {
+      "locale": "ko",
+      "n": 1,
+      "label": "Korean",
+      "wer": 0.4
+    },
+    {
+      "locale": "am",
+      "n": 1,
+      "label": "Amharic, Somali, or other Afro-Asiatic languages",
+      "wer": 1.0
+    },
+    {
+      "locale": "en",
+      "n": 79,
+      "label": "English",
+      "wer": 0.14122681883024252
+    },
+    {
+      "locale": "de",
+      "n": 1,
+      "label": "German",
+      "wer": 0.0
+    },
+    {
+      "locale": "es",
+      "n": 11,
+      "label": "Spanish",
+      "wer": 0.11926605504587157
+    },
+    {
+      "locale": "yo",
+      "n": 2,
+      "label": "Yoruba, Twi, Igbo, or other languages of Western Africa",
+      "wer": 1.3636363636363635
+    },
+    {
+      "locale": "zh-CN",
+      "n": 2,
+      "label": "Chinese (incl. Mandarin, Cantonese)",
+      "wer": 1.0
+    },
+    {
+      "locale": "yi",
+      "n": 1,
+      "label": "Yiddish, Pennsylvania Dutch or other West Germanic languages",
+      "wer": 1.0
+    },
+    {
+      "locale": "hi",
+      "n": 1,
+      "label": "Hindi",
+      "wer": 1.0
+    }
+  ]
+}
