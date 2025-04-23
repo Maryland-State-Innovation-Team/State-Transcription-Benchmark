@@ -60,7 +60,9 @@ def main(args):
     outdir = os.path.dirname(args.outfile)
     os.makedirs(outdir, exist_ok=True)
     dataset = load_from_disk(args.indir)
-    dataset = dataset.map(openai_transcribe)
+    dataset = dataset.shuffle(seed=1634).select(range(100)).map(openai_transcribe)
+    # Cache transcribed dataset for later, just in case
+    dataset.save_to_disk(f'{args.indir}_transcribed')
     wer = load("wer")
     results_dict['wer'] = wer.compute(predictions=dataset['transcription'], references=dataset['sentence'])
     unique_locales = list(set(dataset['locale']))

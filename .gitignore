@@ -174,3 +174,4 @@ cython_debug/
 .pypirc
 
 *_voice_dataset
+*_voice_dataset_transcribed
