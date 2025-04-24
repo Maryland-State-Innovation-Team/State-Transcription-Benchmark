@@ -37,17 +37,19 @@ def openai_transcribe(sample):
             file=audio_file,
             language=sample['locale'][:2]
         )
+        transcription_text = transcription.text
     except BadRequestError: # Do not specify language when not officially supported
         try:
             transcription = CLIENT.audio.transcriptions.create(
                 model=MODEL,
                 file=audio_file
             )
+            transcription_text = transcription.text
         except OpenAIError:
-            transcription = ''
+            transcription_text = ''
     except OpenAIError:
-        transcription = ''
-    sample['transcription'] = transcription.text
+        transcription_text = ''
+    sample['transcription'] = transcription_text
     return sample
 
 
@@ -67,11 +69,11 @@ def main(args):
     total_minutes = sum(dataset['duration']) / 60
     total_cost = total_minutes * COST_PER_MINUTE
     if click.confirm(
-        f'Total audio length is {round(total_minutes)} and estimated total cost to transcribe with model {MODEL} is ${round(total_cost, 2)}. Do you want to continue?'
+        f'Total audio length is {round(total_minutes)} minutes and estimated total cost to transcribe with model {MODEL} is ${round(total_cost, 2)}. Do you want to continue?'
     ):
         dataset = dataset.map(openai_transcribe, remove_columns=["audio"])
         # Cache transcribed dataset for later, just in case
-        dataset.save_to_disk(f'{args.indir}_transcribed')
+        dataset.save_to_disk(f'{args.indir}_{MODEL}_transcribed')
         wer = load("wer")
         results_dict['wer'] = wer.compute(predictions=dataset['transcription'], references=dataset['sentence'])
         unique_locales = list(set(dataset['locale']))
