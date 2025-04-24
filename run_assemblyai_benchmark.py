@@ -51,7 +51,7 @@ def main(args):
     }
     outdir = os.path.dirname(args.outfile)
     os.makedirs(outdir, exist_ok=True)
-    dataset = load_from_disk(args.indir).shuffle(seed=1634).select(range(10))
+    dataset = load_from_disk(args.indir)
     # Estimate cost
     dataset = dataset.map(lambda sample: {'duration': sample['audio']['array'].shape[0] / sample['audio']['sampling_rate']})
     total_minutes = sum(dataset['duration']) / 60

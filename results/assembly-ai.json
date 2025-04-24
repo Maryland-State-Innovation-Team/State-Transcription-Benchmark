@@ -1,0 +1,14 @@
+{
+  "test_timestamp": "2025-04-24 14:12:25",
+  "input": "./MD_voice_dataset",
+  "model": "assembly-ai",
+  "wer": 0.08695652173913043,
+  "locales": [
+    {
+      "locale": "en",
+      "n": 10,
+      "label": "English",
+      "wer": 0.08695652173913043
+    }
+  ]
+}
