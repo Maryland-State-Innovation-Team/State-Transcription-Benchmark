@@ -8,6 +8,8 @@ from us import states
 from huggingface_hub import login
 from datasets import load_dataset, concatenate_datasets, Dataset
 from tqdm import tqdm
+import pandas as pd
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -235,7 +237,7 @@ LANGUAGES = [
 
 # Construct a Mozilla Common Voice benchmark dataset in proportion to
 # the percentage languages spoken at home in a given state, according the ACS 5-year 2023
-def construct_dataset(state_abbrevation, out_length):
+def construct_dataset(state_abbrevation, out_length, output_csv=False):
     load_dotenv()
     CENSUS_API_KEY = os.getenv('CENSUS_API_KEY')
     if CENSUS_API_KEY is None:
@@ -265,12 +267,17 @@ def construct_dataset(state_abbrevation, out_length):
     denominator = acs_language_counts['B16001_001E']
     del acs_language_counts['B16001_001E']
     acs_language_percents = {key: numerator / denominator for key, numerator in acs_language_counts.items()}
+    acs_to_label = {lang['acs_code']: lang['label'] for lang in LANGUAGES}
+    if output_csv:
+        pd.DataFrame(
+            [(acs_to_label[key], value) for key, value in acs_language_percents.items()],
+            columns=['Language spoken at home', 'Percentage']
+        ).to_csv(f'{state_abbrevation}_language_percents.csv')
     acs_languages_not_in_cv = [lang['acs_code'] for lang in LANGUAGES if lang['common_voice_code'] is None]
     represented_language_percents = {key: value for key, value in acs_language_percents.items() if key not in acs_languages_not_in_cv}
     not_represented_language_percents = {key: value for key, value in acs_language_percents.items() if key in acs_languages_not_in_cv}
     sum_not_represented_languages = round(sum(not_represented_language_percents.values()) * 100, 1)
     sorted_not_represented_language_percents = dict(sorted(not_represented_language_percents.items(), key=lambda item: item[1], reverse=True))
-    acs_to_label = {lang['acs_code']: lang['label'] for lang in LANGUAGES}
     logger.warning(
         (
             f'{sum_not_represented_languages}% of languages spoken at home in {state_abbrevation} are not represented in the Common Voice dataset:'
@@ -306,7 +313,7 @@ def construct_dataset(state_abbrevation, out_length):
 def main(args):
     state_outdir = os.path.join(args.outdir, f'{args.state_abbrevation}_voice_dataset')
     os.makedirs(state_outdir, exist_ok=True)
-    dataset = construct_dataset(args.state_abbrevation, args.length)
+    dataset = construct_dataset(args.state_abbrevation, args.length, True)
     if dataset is not None:
         dataset.save_to_disk(state_outdir)
     
