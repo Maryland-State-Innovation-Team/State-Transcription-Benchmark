@@ -1,0 +1,14 @@
+{
+  "test_timestamp": "2025-04-25 18:31:08",
+  "input": "./MD_voice_dataset",
+  "model": "gpt-4o-transcribe",
+  "wer": 0.05813953488372093,
+  "locales": [
+    {
+      "locale": "es",
+      "n": 10,
+      "label": "Spanish",
+      "wer": 0.05813953488372093
+    }
+  ]
+}

@@ -22,7 +22,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if OPENAI_API_KEY is None:
     logger.error('Please provide an OPENAI_API_KEY in a .env file.')
 CLIENT = OpenAI(api_key = OPENAI_API_KEY)
-MODEL = 'whisper-1'
+MODEL = 'gpt-4o-transcribe'
 COST_PER_MINUTE = 0.006
 
 
