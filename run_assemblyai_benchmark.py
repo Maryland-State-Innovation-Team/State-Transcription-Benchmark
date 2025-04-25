@@ -33,8 +33,15 @@ def assemblyai_transcribe(sample):
     audio_file.name = f'sample.{file_type}'
     sf.write(audio_file, sample['audio']['array'], sample['audio']['sampling_rate'], format=file_type)
     try:
-        transcription = transcriber.transcribe(audio_file.getvalue())
+        config = aai.TranscriptionConfig(language_code=sample['locale'][:2])
+        transcription = transcriber.transcribe(audio_file.getvalue(), config)
         transcription_text = transcription.text
+    except aai.types.TranscriptError:
+        try:
+            transcription = transcriber.transcribe(audio_file.getvalue())
+            transcription_text = transcription.text
+        except:
+            transcription_text = ''
     except:
         transcription_text = ''
     sample['transcription'] = transcription_text
