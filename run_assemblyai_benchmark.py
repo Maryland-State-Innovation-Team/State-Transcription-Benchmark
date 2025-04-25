@@ -23,7 +23,7 @@ if ASSEMBLYAI_API_KEY is None:
     logger.error('Please provide an ASSEMBLYAI_API_KEY in a .env file.')
 aai.settings.api_key = f"{ASSEMBLYAI_API_KEY}"
 MODEL = 'assembly-ai'
-COST_PER_MINUTE = 0.002
+COST_PER_MINUTE = 0.0067
 
 
 def assemblyai_transcribe(sample):
