@@ -91,6 +91,7 @@ def main(args):
                 'wer': wer.compute(predictions=filtered_dataset['transcription'], references=filtered_dataset['sentence'])
             }
             results_dict['locales'].append(locale_results_dict)
+        results_dict['locales'] = sorted(results_dict['locales'], key=lambda locale: locale['n'], reverse=True)
         with open(args.outfile, 'w') as json_file:
             json_file.write(json.dumps(results_dict, indent=2))
 
