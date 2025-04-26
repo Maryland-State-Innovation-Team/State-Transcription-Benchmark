@@ -1,14 +1,218 @@
 {
-  "test_timestamp": "2025-04-25 18:31:08",
+  "test_timestamp": "2025-04-25 18:37:02",
   "input": "./MD_voice_dataset",
   "model": "gpt-4o-transcribe",
-  "wer": 0.05813953488372093,
+  "wer": 0.15772182018620998,
   "locales": [
     {
+      "locale": "en",
+      "n": 8076,
+      "label": "English",
+      "wer": 0.14061815720674692
+    },
+    {
       "locale": "es",
-      "n": 10,
+      "n": 960,
       "label": "Spanish",
-      "wer": 0.05813953488372093
+      "wer": 0.08609341825902335
+    },
+    {
+      "locale": "zh-CN",
+      "n": 123,
+      "label": "Chinese (incl. Mandarin, Cantonese)",
+      "wer": 0.6991869918699187
+    },
+    {
+      "locale": "yo",
+      "n": 111,
+      "label": "Yoruba, Twi, Igbo, or other languages of Western Africa",
+      "wer": 0.8845822566752799
+    },
+    {
+      "locale": "fr",
+      "n": 105,
+      "label": "French (incl. Cajun)",
+      "wer": 0.12287712287712288
+    },
+    {
+      "locale": "am",
+      "n": 72,
+      "label": "Amharic, Somali, or other Afro-Asiatic languages",
+      "wer": 0.8216939078751857
+    },
+    {
+      "locale": "ko",
+      "n": 63,
+      "label": "Korean",
+      "wer": 0.19960474308300397
+    },
+    {
+      "locale": "ur",
+      "n": 40,
+      "label": "Urdu",
+      "wer": 0.24096385542168675
+    },
+    {
+      "locale": "ar",
+      "n": 39,
+      "label": "Arabic",
+      "wer": 0.4368421052631579
+    },
+    {
+      "locale": "ru",
+      "n": 39,
+      "label": "Russian",
+      "wer": 0.23529411764705882
+    },
+    {
+      "locale": "vi",
+      "n": 35,
+      "label": "Vietnamese",
+      "wer": 0.32954545454545453
+    },
+    {
+      "locale": "hi",
+      "n": 35,
+      "label": "Hindi",
+      "wer": 0.18867924528301888
+    },
+    {
+      "locale": "ne-NP",
+      "n": 32,
+      "label": "Nepali, Marathi, or other Indic languages",
+      "wer": 0.38461538461538464
+    },
+    {
+      "locale": "fa",
+      "n": 29,
+      "label": "Persian (incl. Farsi, Dari)",
+      "wer": 0.35714285714285715
+    },
+    {
+      "locale": "pt",
+      "n": 27,
+      "label": "Portuguese",
+      "wer": 0.3188405797101449
+    },
+    {
+      "locale": "sw",
+      "n": 26,
+      "label": "Swahili or other languages of Central, Eastern, and Southern Africa",
+      "wer": 0.4485981308411215
+    },
+    {
+      "locale": "de",
+      "n": 26,
+      "label": "German",
+      "wer": 0.1409090909090909
+    },
+    {
+      "locale": "te",
+      "n": 21,
+      "label": "Telugu",
+      "wer": 0.5789473684210527
+    },
+    {
+      "locale": "bn",
+      "n": 17,
+      "label": "Bengali",
+      "wer": 0.3816793893129771
+    },
+    {
+      "locale": "ta",
+      "n": 14,
+      "label": "Tamil",
+      "wer": 0.4880952380952381
+    },
+    {
+      "locale": "it",
+      "n": 14,
+      "label": "Italian",
+      "wer": 0.1532258064516129
+    },
+    {
+      "locale": "ja",
+      "n": 14,
+      "label": "Japanese",
+      "wer": 0.7333333333333333
+    },
+    {
+      "locale": "el",
+      "n": 13,
+      "label": "Greek",
+      "wer": 0.3132530120481928
+    },
+    {
+      "locale": "ml",
+      "n": 12,
+      "label": "Malayalam, Kannada, or other Dravidian languages",
+      "wer": 0.717391304347826
+    },
+    {
+      "locale": "pa-IN",
+      "n": 12,
+      "label": "Punjabi",
+      "wer": 0.575
+    },
+    {
+      "locale": "he",
+      "n": 12,
+      "label": "Hebrew",
+      "wer": 0.6419753086419753
+    },
+    {
+      "locale": "uk",
+      "n": 11,
+      "label": "Ukrainian or other Slavic languages",
+      "wer": 0.3076923076923077
+    },
+    {
+      "locale": "pl",
+      "n": 8,
+      "label": "Polish",
+      "wer": 0.21739130434782608
+    },
+    {
+      "locale": "yi",
+      "n": 6,
+      "label": "Yiddish, Pennsylvania Dutch or other West Germanic languages",
+      "wer": 0.8235294117647058
+    },
+    {
+      "locale": "th",
+      "n": 5,
+      "label": "Thai, Lao, or other Tai-Kadai languages",
+      "wer": 1.0
+    },
+    {
+      "locale": "lo",
+      "n": 5,
+      "label": "Thai, Lao, or other Tai-Kadai languages",
+      "wer": 0.8823529411764706
+    },
+    {
+      "locale": "hy-AM",
+      "n": 4,
+      "label": "Armenian",
+      "wer": 0.21621621621621623
+    },
+    {
+      "locale": "kmr",
+      "n": 4,
+      "label": "Khmer",
+      "wer": 0.6296296296296297
+    },
+    {
+      "locale": "sr",
+      "n": 3,
+      "label": "Serbo-Croatian",
+      "wer": 0.3333333333333333
+    },
+    {
+      "locale": "sq",
+      "n": 3,
+      "label": "Serbo-Croatian",
+      "wer": 0.27586206896551724
     }
   ]
 }
