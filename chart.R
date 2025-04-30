@@ -79,7 +79,7 @@ ggplot(overall, aes(x=model, y=wer, group=method, fill=method)) +
     ),
     fill="Language detection method", 
     x="", 
-    y="Word error rate\n(Lower is better)"
+    y="Word error rate\n(lower is better)"
   )
 ggsave("../graphics/overall.png",height=5,width=10)
 
@@ -124,7 +124,7 @@ ggplot(english, aes(x=model, y=wer, group=method, fill=method)) +
     ),
     fill="Language detection method", 
     x="", 
-    y="Word error rate\n(Lower is better)"
+    y="Word error rate\n(lower is better)"
   )
 ggsave("../graphics/english.png",height=5,width=10)
 
@@ -204,13 +204,13 @@ ggplot(other, aes(x=locale, y=wer, group=model, fill=model)) +
   ) +
   labs(
     title=paste0(
-      "Transcription model performance on all other locale voice benchmark (n=",
+      "Transcription model performance on manual-detection other locale voice benchmark (n=",
       number_format(big.mark=",")(sum(other$n) / 3),
       ")"
     ),
     fill="", 
     x="", 
-    y="Word error rate\n(Lower is better)"
+    y="Word error rate\n(lower is better)"
   )
 ggsave("../graphics/other.png",height=5,width=10)
 
